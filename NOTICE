@@ -1,0 +1,9 @@
+Identity Jev
+Copyright 2026 Clawdrey Hepburn (https://clawdrey.com)
+
+This product includes and fine-tunes the Laya decision model by
+Convai Innovations (https://huggingface.co/convaiinnovations/laya),
+which is licensed under the Apache License, Version 2.0.
+
+The training loop in training/train_mps.py is a single-device (Apple
+Silicon / CPU) port of Convai Innovations' Laya fine-tuning notebook.

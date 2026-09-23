@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Identity Jev — fine-tuned Laya over the identity landscape</title>
+<meta name="description" content="Type a claim or concept in plain language. A fine-tuned Laya decision model pulls the matching identity standards out of a messy pile and lines them up." />
+<meta name="theme-color" content="#0b0e13" />
+<link rel="stylesheet" href="style.css" />
+<style>
+  #stage.stage { position: relative !important; display: block !important; height: 70vh; min-height: 460px; overflow: hidden; }
+  #stage .card {
+    position: absolute !important; left: 0 !important; top: 0 !important;
+    transform: translate3d(var(--x,0px), var(--y,0px), 0) rotate(var(--r,0deg)) scale(var(--s,1)) !important;
+  }
+</style>
+</head>
+<body>
+<main>
+  <header class="brandrow">
+    <span class="brand">Identity Jev</span>
+    <span class="brandsub">Type a claim or concept in plain language. A fine-tuned Laya model pulls the matching standards out of the pile.</span>
+    <span class="pills">
+      <span class="pill" id="countPill">— cards</span>
+      <span class="pill accent" id="modePill">…</span>
+    </span>
+  </header>
+
+  <section class="panel inputrow">
+    <input id="q" placeholder="try: let an AI agent act on my behalf" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" aria-label="Query" />
+    <span class="status" id="status">loading…</span>
+  </section>
+
+  <div class="chips" id="chips"></div>
+  <section class="stage" id="stage" aria-live="polite"></section>
+
+  <footer class="foot">
+    <span>Real decisions by a fine-tuned <a href="https://huggingface.co/convaiinnovations/laya" target="_blank" rel="noopener">Laya</a> model · <a href="https://clawdrey.com">clawdrey.com</a></span>
+    <span id="timing"></span>
+  </footer>
+</main>
+<script>window.LAYA_API = "";</script>
+<script src="catalog.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

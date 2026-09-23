@@ -1,0 +1,686 @@
+{
+  "_doc": "Identity-standards card catalog for the Jev-powered filter demo. Each card is one Choice option. `key` is the stable id, `label` is what shows on the card, `criteria` is the rubric text Jev reads (write it to SEPARATE this card from the others), `tags` are for the offline keyword fallback and for optional pre-filtering, `href` links out.",
+  "_notes": "Keep total under 255 (Jev Choice cap). Write criteria that name the specific claims/mechanism so 'sub', 'act', 'cnf', 'DPoP' etc. discriminate cleanly. Tags are lowercased tokens; the offline fallback matches query terms against label+criteria+tags.",
+  "cards": [
+    {
+      "key": "oidc_core",
+      "label": "OpenID Connect Core",
+      "org": "OIDF",
+      "criteria": "OpenID Connect Core 1.0. The 'sub' claim is the REQUIRED, locally-unique, stable subject (end-user) identifier in the ID Token; supports pairwise 'sub' for privacy. Also defines 'iss', 'aud', 'nonce', 'azp', 'auth_time', 'acr', 'amr'. The canonical home of end-user 'sub' semantics.",
+      "tags": ["sub", "id_token", "aud", "iss", "nonce", "azp", "acr", "amr", "pairwise", "oidc", "openid", "end-user", "authentication"],
+      "href": "https://openid.net/specs/openid-connect-core-1_0.html"
+    },
+    {
+      "key": "rfc9068_jwt_at",
+      "label": "RFC 9068 — JWT Access Tokens",
+      "org": "IETF OAuth",
+      "criteria": "JSON Web Token (JWT) Profile for OAuth 2.0 Access Tokens. Defines the 'sub' claim as the token subject (the resource owner or the client acting on its own behalf), plus 'client_id', 'scope', 'aud', 'iss', 'exp', 'iat', 'jti', 'auth_time', 'acr', 'amr'. The interop profile for what a bearer access token's 'sub' means.",
+      "tags": ["sub", "access_token", "jwt", "client_id", "scope", "aud", "jti", "oauth", "at", "bearer"],
+      "href": "https://www.rfc-editor.org/rfc/rfc9068"
+    },
+    {
+      "key": "rfc7519_jwt",
+      "label": "RFC 7519 — JWT",
+      "org": "IETF",
+      "criteria": "JSON Web Token base spec. Registers the core claim set: 'iss', 'sub', 'aud', 'exp', 'nbf', 'iat', 'jti'. 'sub' is defined here as the principal that is the subject of the JWT, unique within issuer or globally. The root definition every other 'sub' profile builds on.",
+      "tags": ["sub", "iss", "aud", "exp", "nbf", "iat", "jti", "jwt", "claims", "base"],
+      "href": "https://www.rfc-editor.org/rfc/rfc7519"
+    },
+    {
+      "key": "rfc7515_jws",
+      "label": "RFC 7515 — JWS",
+      "org": "IETF",
+      "criteria": "JSON Web Signature. Defines how to sign JWTs and other payloads: JOSE header ('alg', 'kid', 'jwk', 'x5c', 'crit'), the compact serialization, and signature validation. About integrity/signing, not about subject claims.",
+      "tags": ["jws", "sign", "signature", "alg", "kid", "jose", "jwk", "header", "integrity"],
+      "href": "https://www.rfc-editor.org/rfc/rfc7515"
+    },
+    {
+      "key": "rfc7516_jwe",
+      "label": "RFC 7516 — JWE",
+      "org": "IETF",
+      "criteria": "JSON Web Encryption. Encrypts payloads with 'alg' (key management) and 'enc' (content encryption). About confidentiality/sealing of tokens, not subject identity.",
+      "tags": ["jwe", "encrypt", "enc", "alg", "confidentiality", "seal", "jose"],
+      "href": "https://www.rfc-editor.org/rfc/rfc7516"
+    },
+    {
+      "key": "rfc7517_jwk",
+      "label": "RFC 7517 — JWK",
+      "org": "IETF",
+      "criteria": "JSON Web Key. Represents cryptographic keys as JSON ('kty', 'kid', 'use', 'alg', 'crv', 'x', 'y', 'n', 'e') and JWK Sets published at jwks_uri. About key material and discovery, not subject claims.",
+      "tags": ["jwk", "jwks", "key", "kid", "kty", "public key", "jwks_uri", "rotation"],
+      "href": "https://www.rfc-editor.org/rfc/rfc7517"
+    },
+    {
+      "key": "rfc7518_jwa",
+      "label": "RFC 7518 — JWA",
+      "org": "IETF",
+      "criteria": "JSON Web Algorithms. Registers the algorithm identifiers used by JWS/JWE/JWK: RS256, ES256, EdDSA, HS256, A256GCM, ECDH-ES, etc. Pure algorithm registry.",
+      "tags": ["jwa", "alg", "rs256", "es256", "eddsa", "hs256", "algorithms", "crypto"],
+      "href": "https://www.rfc-editor.org/rfc/rfc7518"
+    },
+    {
+      "key": "rfc6749_oauth2",
+      "label": "RFC 6749 — OAuth 2.0",
+      "org": "IETF OAuth",
+      "criteria": "The OAuth 2.0 Authorization Framework. Defines roles (resource owner, client, authorization server, resource server), grant types, and the 'scope' parameter. Delegated authorization foundation; does not itself define token contents or 'sub'.",
+      "tags": ["oauth", "oauth2", "scope", "grant", "authorization", "client", "resource owner", "framework"],
+      "href": "https://www.rfc-editor.org/rfc/rfc6749"
+    },
+    {
+      "key": "rfc8693_token_exchange",
+      "label": "RFC 8693 — Token Exchange",
+      "org": "IETF OAuth",
+      "criteria": "OAuth 2.0 Token Exchange. Introduces the 'act' (actor) claim and 'may_act', enabling delegation and impersonation: a token can say subject 'sub' is being acted upon by actor 'act'. Nested 'act' expresses a delegation chain. The home of the 'act' claim.",
+      "tags": ["act", "actor", "may_act", "delegation", "impersonation", "token exchange", "sub", "oauth", "chain"],
+      "href": "https://www.rfc-editor.org/rfc/rfc8693"
+    },
+    {
+      "key": "rfc9396_rar",
+      "label": "RFC 9396 — Rich Authorization Requests",
+      "org": "IETF OAuth",
+      "criteria": "OAuth 2.0 Rich Authorization Requests. Adds 'authorization_details': a structured array describing fine-grained authorization (type, actions, locations, datatypes) beyond coarse 'scope'. The carrier for structured, attenuatable permissions and agent mandates.",
+      "tags": ["rar", "authorization_details", "fine-grained", "scope", "permissions", "mandate", "attenuation", "oauth"],
+      "href": "https://www.rfc-editor.org/rfc/rfc9396"
+    },
+    {
+      "key": "rfc9449_dpop",
+      "label": "RFC 9449 — DPoP",
+      "org": "IETF OAuth",
+      "criteria": "Demonstrating Proof of Possession. Sender-constrains tokens to a client key via a DPoP proof JWT and the 'cnf' { 'jkt' } thumbprint confirmation claim, plus 'ath' (access token hash) and 'htm'/'htu'. Prevents bearer-token theft/replay. Home of application-layer proof-of-possession and 'cnf.jkt'.",
+      "tags": ["dpop", "cnf", "jkt", "ath", "htm", "htu", "proof of possession", "pop", "sender-constrained", "replay", "nonce"],
+      "href": "https://www.rfc-editor.org/rfc/rfc9449"
+    },
+    {
+      "key": "rfc8705_mtls",
+      "label": "RFC 8705 — OAuth mTLS",
+      "org": "IETF OAuth",
+      "criteria": "Mutual-TLS client authentication and certificate-bound access tokens. Sender-constrains tokens with 'cnf' { 'x5t#S256' } to the client certificate. The X.509/transport-layer sibling of DPoP.",
+      "tags": ["mtls", "cnf", "x5t", "certificate", "sender-constrained", "client authentication", "x509", "pop"],
+      "href": "https://www.rfc-editor.org/rfc/rfc8705"
+    },
+    {
+      "key": "rfc7662_introspection",
+      "label": "RFC 7662 — Token Introspection",
+      "org": "IETF OAuth",
+      "criteria": "OAuth 2.0 Token Introspection. A resource server POSTs an opaque or JWT token and gets back 'active', plus 'sub', 'scope', 'client_id', 'exp', 'aud'. How an RS learns a token's 'sub' when it cannot parse it itself.",
+      "tags": ["introspection", "active", "sub", "scope", "client_id", "opaque", "oauth", "resource server"],
+      "href": "https://www.rfc-editor.org/rfc/rfc7662"
+    },
+    {
+      "key": "rfc7009_revocation",
+      "label": "RFC 7009 — Token Revocation",
+      "org": "IETF OAuth",
+      "criteria": "OAuth 2.0 Token Revocation endpoint. Lets a client invalidate an access or refresh token. About revocation lifecycle, not subject claims.",
+      "tags": ["revocation", "revoke", "refresh token", "lifecycle", "oauth"],
+      "href": "https://www.rfc-editor.org/rfc/rfc7009"
+    },
+    {
+      "key": "rfc7636_pkce",
+      "label": "RFC 7636 — PKCE",
+      "org": "IETF OAuth",
+      "criteria": "Proof Key for Code Exchange. Binds an authorization code to a 'code_verifier'/'code_challenge' so a stolen code can't be redeemed. Public-client hardening for the authorization code flow.",
+      "tags": ["pkce", "code_challenge", "code_verifier", "authorization code", "public client", "oauth"],
+      "href": "https://www.rfc-editor.org/rfc/rfc7636"
+    },
+    {
+      "key": "rfc7523_jwt_bearer",
+      "label": "RFC 7523 — JWT Bearer Grant",
+      "org": "IETF OAuth",
+      "criteria": "JWT Profile for OAuth 2.0 Client Authentication and Authorization Grants. A signed JWT with 'iss', 'sub', 'aud', 'exp' is exchanged for an access token. Basis for service-to-service assertion grants; 'sub' is the assertion subject.",
+      "tags": ["jwt bearer", "assertion", "grant", "sub", "iss", "aud", "service account", "oauth"],
+      "href": "https://www.rfc-editor.org/rfc/rfc7523"
+    },
+    {
+      "key": "rfc9101_jar",
+      "label": "RFC 9101 — JAR",
+      "org": "IETF OAuth",
+      "criteria": "JWT-Secured Authorization Request. Passes the authorization request parameters inside a signed/encrypted 'request' or 'request_uri' JWT so they can't be tampered with. Request-integrity, not subject identity.",
+      "tags": ["jar", "request object", "request_uri", "signed request", "oauth"],
+      "href": "https://www.rfc-editor.org/rfc/rfc9101"
+    },
+    {
+      "key": "rfc9126_par",
+      "label": "RFC 9126 — PAR",
+      "org": "IETF OAuth",
+      "criteria": "Pushed Authorization Requests. Client pushes request params to the AS up front and gets a 'request_uri' handle. Front-channel hardening; not about token subject.",
+      "tags": ["par", "pushed", "request_uri", "front-channel", "oauth"],
+      "href": "https://www.rfc-editor.org/rfc/rfc9126"
+    },
+    {
+      "key": "rfc9207_iss_response",
+      "label": "RFC 9207 — Issuer Identification",
+      "org": "IETF OAuth",
+      "criteria": "Adds 'iss' to the authorization response to prevent mix-up attacks where a client is confused about which AS answered. About issuer disambiguation in the response.",
+      "tags": ["iss", "mix-up", "issuer", "authorization response", "oauth"],
+      "href": "https://www.rfc-editor.org/rfc/rfc9207"
+    },
+    {
+      "key": "rfc8414_as_metadata",
+      "label": "RFC 8414 — AS Metadata",
+      "org": "IETF OAuth",
+      "criteria": "OAuth 2.0 Authorization Server Metadata. The .well-known/oauth-authorization-server document listing 'issuer', endpoints, 'jwks_uri', supported scopes and algorithms. Discovery, not claims.",
+      "tags": ["metadata", "discovery", "well-known", "jwks_uri", "issuer", "oauth"],
+      "href": "https://www.rfc-editor.org/rfc/rfc8414"
+    },
+    {
+      "key": "oidc_discovery",
+      "label": "OIDC Discovery",
+      "org": "OIDF",
+      "criteria": "OpenID Connect Discovery. The .well-known/openid-configuration document advertising 'issuer', authorization/token/userinfo endpoints, 'jwks_uri', 'subject_types_supported' (public vs pairwise 'sub'). Where a client learns how an OP shapes 'sub'.",
+      "tags": ["discovery", "openid-configuration", "subject_types", "pairwise", "public", "sub", "well-known", "oidc"],
+      "href": "https://openid.net/specs/openid-connect-discovery-1_0.html"
+    },
+    {
+      "key": "oidc_userinfo",
+      "label": "OIDC UserInfo",
+      "org": "OIDF",
+      "criteria": "The OpenID Connect UserInfo endpoint returns claims about the authenticated end user, keyed to the same 'sub' as the ID Token. Where profile claims for a given 'sub' live.",
+      "tags": ["userinfo", "sub", "profile", "claims", "end-user", "oidc"],
+      "href": "https://openid.net/specs/openid-connect-core-1_0.html#UserInfo"
+    },
+    {
+      "key": "rfc9700_bcp",
+      "label": "RFC 9700 — OAuth Security BCP",
+      "org": "IETF OAuth",
+      "criteria": "Best Current Practice for OAuth 2.0 Security. Consolidated guidance: sender-constrained tokens, redirect hardening, mix-up defenses, PKCE everywhere. A security overlay across the OAuth specs, not a claim definition.",
+      "tags": ["security", "bcp", "best practice", "hardening", "oauth"],
+      "href": "https://www.rfc-editor.org/rfc/rfc9700"
+    },
+    {
+      "key": "saml2",
+      "label": "SAML 2.0",
+      "org": "OASIS",
+      "criteria": "Security Assertion Markup Language 2.0. XML assertions carrying a Subject/NameID (persistent, transient, or email) with SubjectConfirmation. The XML predecessor to OIDC; its NameID is the SAML analogue of 'sub' but is NOT a JWT claim.",
+      "tags": ["saml", "nameid", "assertion", "xml", "subject", "federation", "sso"],
+      "href": "http://docs.oasis-open.org/security/saml/v2.0/saml-core-2.0-os.pdf"
+    },
+    {
+      "key": "scim2",
+      "label": "SCIM 2.0",
+      "org": "IETF",
+      "criteria": "System for Cross-domain Identity Management (RFC 7643/7644). REST schema for provisioning users and groups: 'id', 'externalId', 'userName'. About lifecycle/provisioning of identity records, not runtime tokens or 'sub'.",
+      "tags": ["scim", "provisioning", "user", "group", "externalid", "lifecycle", "directory"],
+      "href": "https://www.rfc-editor.org/rfc/rfc7644"
+    },
+    {
+      "key": "verifiable_credentials",
+      "label": "W3C Verifiable Credentials",
+      "org": "W3C",
+      "criteria": "Verifiable Credentials Data Model 2.0. Issuer signs claims about a 'credentialSubject' identified by a DID; holder presents them in a Verifiable Presentation. Subject is 'credentialSubject.id' (a DID), not JWT 'sub' (though VC-JWT maps one to the other).",
+      "tags": ["vc", "verifiable credentials", "credentialsubject", "did", "holder", "issuer", "presentation", "wallet"],
+      "href": "https://www.w3.org/TR/vc-data-model-2.0/"
+    },
+    {
+      "key": "did_core",
+      "label": "W3C DID Core",
+      "org": "W3C",
+      "criteria": "Decentralized Identifiers 1.0. A self-describing URI ('did:method:id') that resolves to a DID Document with verification methods and service endpoints. A pubkey-anchored identifier scheme; an alternative to URL/'sub'-anchored identity.",
+      "tags": ["did", "decentralized identifier", "did document", "verification method", "self-sovereign", "pubkey"],
+      "href": "https://www.w3.org/TR/did-core/"
+    },
+    {
+      "key": "x509",
+      "label": "X.509 / PKIX",
+      "org": "IETF/ITU",
+      "criteria": "X.509 certificates (RFC 5280). Subject and SubjectAltName identify the certificate holder; CA-issued chain to a trust anchor. Transport/PKI identity; the 'cnf' x5t#S256 thumbprint in mTLS points at one of these.",
+      "tags": ["x509", "certificate", "pkix", "subject", "san", "ca", "chain", "mtls", "pki"],
+      "href": "https://www.rfc-editor.org/rfc/rfc5280"
+    },
+    {
+      "key": "spiffe_svid",
+      "label": "SPIFFE / SPIRE (SVID)",
+      "org": "CNCF",
+      "criteria": "Secure Production Identity Framework for Everyone. A SPIFFE ID ('spiffe://trust-domain/workload/path') is issued as an X.509-SVID or JWT-SVID; in JWT-SVID the SPIFFE ID is carried in 'sub'. Workload identity where 'sub' is a URI naming a workload, not a person.",
+      "tags": ["spiffe", "spire", "svid", "workload", "sub", "trust domain", "jwt-svid", "x509-svid", "uri"],
+      "href": "https://spiffe.io/docs/latest/spiffe-about/spiffe-concepts/"
+    },
+    {
+      "key": "wimse_s2s",
+      "label": "WIMSE S2S / WIT",
+      "org": "IETF WIMSE",
+      "criteria": "draft-ietf-wimse-s2s-protocol. Workload-to-workload protocol defining the Workload Identity Token (WIT), whose 'sub' is a workload identity, plus a bound proof for the calling workload. The WG home of workload 'sub' semantics for service-to-service calls.",
+      "tags": ["wimse", "wit", "workload", "s2s", "service-to-service", "sub", "workload identity token"],
+      "href": "https://datatracker.ietf.org/doc/draft-ietf-wimse-s2s-protocol/"
+    },
+    {
+      "key": "wimse_ai_agent",
+      "label": "WIMSE for AI Agents",
+      "org": "IETF WIMSE",
+      "criteria": "draft-ni-wimse-ai-agent-identity. Applies WIMSE workload identity to AI agents, treating each agent instance as a workload with its own identity and 'sub'. Agent-as-workload framing inside the WIMSE model.",
+      "tags": ["wimse", "ai agent", "agent identity", "workload", "sub", "huawei"],
+      "href": "https://datatracker.ietf.org/doc/draft-ni-wimse-ai-agent-identity/"
+    },
+    {
+      "key": "wimse_ect",
+      "label": "Execution Context Tokens",
+      "org": "IETF WIMSE",
+      "criteria": "draft-nennemann-wimse-ect. Execution Context Tokens carry per-invocation context (which workflow/step an agent call belongs to) alongside workload identity. About binding a call to its execution context, adjacent to identity 'sub'.",
+      "tags": ["ect", "execution context", "wimse", "workflow", "step", "invocation", "agent"],
+      "href": "https://datatracker.ietf.org/doc/draft-nennemann-wimse-ect/"
+    },
+    {
+      "key": "aiagent_auth",
+      "label": "AI Agent Auth (AIMS)",
+      "org": "IETF",
+      "criteria": "draft-klrc-aiagent-auth by Kasselman/Lombardo/Rosomakho/Campbell. Argues agents are workloads, API keys are an antipattern, and lays out the AIMS stack for authenticating AI agents. Architecture/position for agent authN, not a single claim.",
+      "tags": ["aims", "ai agent", "agent auth", "api key", "antipattern", "workload", "kasselman", "campbell"],
+      "href": "https://datatracker.ietf.org/doc/draft-klrc-aiagent-auth/"
+    },
+    {
+      "key": "spiffe_client_auth",
+      "label": "SPIFFE SVIDs as OAuth Client Auth",
+      "org": "IETF OAuth",
+      "criteria": "draft-ietf-oauth-spiffe-client-auth. Uses SPIFFE JWT-SVIDs as OAuth client credentials; a single CIMD URL with a wildcard 'spiffe_id' ('spiffe://ex.org/workloads/*') covers a whole prefix-tree of agents under one trust domain, AS prefix-matches the SVID 'sub'. The bridge between OAuth URL identity and SPIFFE 'sub'.",
+      "tags": ["spiffe", "cimd", "wildcard", "spiffe_id", "sub", "client credentials", "prefix", "oauth", "bridge"],
+      "href": "https://datatracker.ietf.org/doc/draft-ietf-oauth-spiffe-client-auth/"
+    },
+    {
+      "key": "rar_cedar",
+      "label": "Cedar Profile for OAuth RAR",
+      "org": "IETF OAuth (Cecchetti)",
+      "criteria": "draft-cecchetti-oauth-rar-cedar. Profiles RFC 9396 'authorization_details' as Cedar policy, giving a decidable subset relation between a parent mandate and a child mandate. The policy-semantics layer for attenuatable agent authority; pairs with an SMT subset proof.",
+      "tags": ["cedar", "rar", "authorization_details", "mandate", "subset", "attenuation", "policy", "cecchetti", "smt"],
+      "href": "https://datatracker.ietf.org/doc/draft-cecchetti-oauth-rar-cedar/"
+    },
+    {
+      "key": "id_jag",
+      "label": "ID-JAG / Cross-App Access (XAA)",
+      "org": "IETF OAuth",
+      "criteria": "draft-ietf-oauth-identity-assertion-authz-grant. Carries an identity assertion across OAuth AS boundaries as a grant, enabling cross-app access without interactive authorization at each hop. Same 'sub' travels; the actor may change. Karl McGuinness co-author.",
+      "tags": ["id-jag", "xaa", "cross-app", "identity assertion", "grant", "sub", "cross-domain", "mcguinness", "oauth"],
+      "href": "https://datatracker.ietf.org/doc/draft-ietf-oauth-identity-assertion-authz-grant/"
+    },
+    {
+      "key": "oauth_actor_profile",
+      "label": "OAuth Actor Profile for Delegation",
+      "org": "IETF OAuth (McGuinness)",
+      "criteria": "draft-mcguinness-oauth-actor-profile. Uniform interop profile for the 'act' claim (RFC 8693) across JWT assertion grants, JWT access tokens, and Transaction Tokens, and adds 'sub_profile' classifying actor entity type (end user vs service account vs AI agent vs workload). Fixes 'sub' overloading with 'sub_profile'.",
+      "tags": ["act", "actor", "sub_profile", "delegation", "sub", "entity type", "agent", "workload", "mcguinness", "oauth"],
+      "href": "https://datatracker.ietf.org/doc/draft-mcguinness-oauth-actor-profile/"
+    },
+    {
+      "key": "txn_tokens",
+      "label": "Transaction Tokens",
+      "org": "IETF OAuth",
+      "criteria": "draft-ietf-oauth-transaction-tokens. Short-lived, internally-scoped tokens minted at the edge and passed between microservices to preserve the original caller ('sub') and request context through a call chain. Carries 'sub' + 'purp' + 'azd' inside a trust domain.",
+      "tags": ["transaction token", "txn", "tratt", "sub", "purp", "azd", "microservices", "call chain", "oauth"],
+      "href": "https://datatracker.ietf.org/doc/draft-ietf-oauth-transaction-tokens/"
+    },
+    {
+      "key": "jose_hpke",
+      "label": "HPKE for JOSE / COSE",
+      "org": "IETF",
+      "criteria": "draft-ietf-jose-hpke-encrypt and draft-ietf-cose-hpke. Bring Hybrid Public Key Encryption (RFC 9180) into JOSE/COSE so payloads can be sealed to a recipient key. The per-hop sealing layer for identity proofs; about encryption, not 'sub'.",
+      "tags": ["hpke", "jose", "cose", "seal", "encrypt", "recipient", "hybrid", "mike jones"],
+      "href": "https://datatracker.ietf.org/doc/draft-ietf-jose-hpke-encrypt/"
+    },
+    {
+      "key": "cose",
+      "label": "COSE",
+      "org": "IETF",
+      "criteria": "CBOR Object Signing and Encryption (RFC 9052). The CBOR-native analogue of JOSE for constrained/binary environments; signs and encrypts CBOR payloads. Format layer, not subject claims.",
+      "tags": ["cose", "cbor", "sign", "encrypt", "constrained", "binary", "iot"],
+      "href": "https://www.rfc-editor.org/rfc/rfc9052"
+    },
+    {
+      "key": "cwt",
+      "label": "CWT — CBOR Web Token",
+      "org": "IETF",
+      "criteria": "CBOR Web Token (RFC 8392). The CBOR/COSE analogue of JWT with numeric claim keys; claim 2 is 'sub'. Same subject concept as JWT in a binary encoding.",
+      "tags": ["cwt", "cbor", "sub", "token", "cose", "constrained", "binary"],
+      "href": "https://www.rfc-editor.org/rfc/rfc8392"
+    },
+    {
+      "key": "sd_jwt",
+      "label": "SD-JWT",
+      "org": "IETF OAuth",
+      "criteria": "Selective Disclosure JWT (draft-ietf-oauth-selective-disclosure-jwt). Lets a holder reveal a subset of claims via salted digests and disclosures, with an optional key-binding JWT. Privacy layer over JWT claims; 'sub' may be selectively disclosed.",
+      "tags": ["sd-jwt", "selective disclosure", "privacy", "holder", "key binding", "kb-jwt", "digests", "sub"],
+      "href": "https://datatracker.ietf.org/doc/draft-ietf-oauth-selective-disclosure-jwt/"
+    },
+    {
+      "key": "sd_jwt_vc",
+      "label": "SD-JWT VC",
+      "org": "IETF OAuth",
+      "criteria": "SD-JWT-based Verifiable Credentials. Uses SD-JWT to carry credential claims with a 'vct' type and selective disclosure; the subject is bound via 'cnf' key binding. Credential profile of SD-JWT.",
+      "tags": ["sd-jwt vc", "vct", "credential", "selective disclosure", "cnf", "key binding", "wallet"],
+      "href": "https://datatracker.ietf.org/doc/draft-ietf-oauth-sd-jwt-vc/"
+    },
+    {
+      "key": "oid4vci",
+      "label": "OpenID4VCI",
+      "org": "OIDF",
+      "criteria": "OpenID for Verifiable Credential Issuance. Protocol for a wallet to obtain credentials from an issuer over OAuth-protected endpoints. Issuance flow, not a subject-claim definition.",
+      "tags": ["oid4vci", "issuance", "wallet", "credential", "issuer", "oauth", "oidf"],
+      "href": "https://openid.net/specs/openid-4-verifiable-credential-issuance-1_0.html"
+    },
+    {
+      "key": "oid4vp",
+      "label": "OpenID4VP",
+      "org": "OIDF",
+      "criteria": "OpenID for Verifiable Presentations. Protocol for a verifier to request and receive credentials from a wallet, with holder binding. Presentation flow, not a subject-claim definition.",
+      "tags": ["oid4vp", "presentation", "verifier", "wallet", "holder binding", "oidf"],
+      "href": "https://openid.net/specs/openid-4-verifiable-presentations-1_0.html"
+    },
+    {
+      "key": "caep_ssf",
+      "label": "CAEP / SSF",
+      "org": "OIDF",
+      "criteria": "Continuous Access Evaluation Profile over the Shared Signals Framework. Streams security events (session revoked, credential change) keyed to a 'sub' so relying parties revoke access mid-session. Runtime signal plane referencing 'sub'.",
+      "tags": ["caep", "ssf", "shared signals", "continuous access", "session revoked", "sub", "events", "oidf"],
+      "href": "https://openid.net/specs/openid-caep-1_0.html"
+    },
+    {
+      "key": "gnap",
+      "label": "GNAP",
+      "org": "IETF",
+      "criteria": "Grant Negotiation and Authorization Protocol (RFC 9635). A from-scratch alternative to OAuth using a single grant endpoint, client instances, and key-bound access; subject info arrives as 'subject' identifiers/assertions rather than a JWT 'sub'. Different authorization model.",
+      "tags": ["gnap", "grant negotiation", "subject", "key-bound", "alternative", "oauth alternative"],
+      "href": "https://www.rfc-editor.org/rfc/rfc9635"
+    },
+    {
+      "key": "mcp_auth",
+      "label": "MCP Authorization",
+      "org": "Anthropic/MCP",
+      "criteria": "Model Context Protocol authorization. MCP servers act as OAuth resource servers; clients present access tokens whose 'sub' is the user or agent. Where agent tool access meets OAuth token 'sub' in practice.",
+      "tags": ["mcp", "model context protocol", "authorization", "resource server", "sub", "agent", "tools", "oauth"],
+      "href": "https://modelcontextprotocol.io/specification/basic/authorization"
+    },
+    {
+      "key": "ft_jwt",
+      "label": "French Toast JWT (FT-JWT)",
+      "org": "Parecki/Hingnikar",
+      "criteria": "Stacked delegated JWTs for client-to-client delegation. An '&'-delimited chain in Authorization: DPoP, each layer's header 'ft_parent' hashing its parent, 'ft_iss'/'ft_dep' attenuating, same 'sub' and 'aud' across all layers, per-hop 'cnf.jkt'. Full-chain wire shape for delegation.",
+      "tags": ["ft-jwt", "french toast", "delegation", "chain", "ft_parent", "sub", "aud", "cnf", "jkt", "dpop", "parecki", "hingnikar"],
+      "href": "https://github.com/ciamshrek/french-toast-jwt"
+    },
+    {
+      "key": "waffles",
+      "label": "Waffles (WIMSE delegated JWTs)",
+      "org": "Cecchetti/Hingnikar",
+      "criteria": "WIMSE rewrite of FT-JWT for workload-to-workload and agent-to-sub-agent delegation. Same full-chain wire shape, generalized 'sub' for SPIFFE IDs, explicit RFC 9396 'authorization_details' attenuation rules citing the Cedar profile. Agent delegation chain for WIMSE.",
+      "tags": ["waffles", "wimse", "delegation", "chain", "sub", "spiffe", "authorization_details", "attenuation", "agent", "cecchetti"],
+      "href": "https://clawdrey.com/drafts/waffles/"
+    },
+    {
+      "key": "ovid",
+      "label": "OVID",
+      "org": "Clawdrey/Cecchetti",
+      "criteria": "OpenClaw Verifiable Identity Documents. Pubkey-anchored EdDSA JWTs ('typ: ovid+jwt') for AI sub-agents: claims 'sub', 'agent_pub', 'parent_chain', 'parent_ovid', and a Cedar 'mandate'. Compact per-hop chain attestations instead of full JWTs. Pubkey identity + carried mandate for local agent trees.",
+      "tags": ["ovid", "sub", "agent_pub", "parent_chain", "mandate", "cedar", "eddsa", "pubkey", "sub-agent", "compact chain"],
+      "href": "https://github.com/clawdreyhepburn/ovid"
+    },
+    {
+      "key": "ovid_me",
+      "label": "OVID-ME",
+      "org": "Clawdrey/Cecchetti",
+      "criteria": "Cedar policy evaluation engine for OVID mandates. Proves a child mandate is a subset of the parent's effective policy at issuance (Cedar + cvc5 SMT), with enforce/dry-run/shadow modes. The mandate-evaluation half of the OVID stack; about authorization, not 'sub'.",
+      "tags": ["ovid-me", "cedar", "subset", "smt", "cvc5", "mandate", "evaluation", "enforce", "authorization"],
+      "href": "https://github.com/clawdreyhepburn/ovid-me"
+    },
+    {
+      "key": "carapace",
+      "label": "Carapace",
+      "org": "Clawdrey/Cecchetti",
+      "criteria": "Cedar policy enforcement plugin for OpenClaw. A before_tool_call hook that binary allow/denies agent tool, shell, and API calls against a human-defined ceiling. Deployment-level enforcement; not an identity/'sub' spec.",
+      "tags": ["carapace", "cedar", "enforcement", "ceiling", "tool", "shell", "api", "openclaw", "policy"],
+      "href": "https://github.com/clawdreyhepburn/carapace"
+    },
+    {
+      "key": "agentic_jwt_unforge",
+      "label": "Agentic JWT (Unforge)",
+      "org": "Unforge",
+      "criteria": "Intent-binding JWT protocol for AI agents. Per-call Intent Token binds a request to workflow id, step, executing agent, and delegation chain; each agent has an 'agent_checksum' fingerprint of its code/config. Intent-bound delegation, patent-encumbered.",
+      "tags": ["agentic jwt", "unforge", "intent token", "agent_checksum", "workflow", "step", "delegation", "chain"],
+      "href": "https://unforge.dev"
+    },
+    {
+      "key": "pic_model",
+      "label": "Proof-of-Continuity (PIC)",
+      "org": "Nitro Agility",
+      "criteria": "A temporal authority-propagation model. Binds execution continuity via a Proof of Relationship per hop and monotonic restriction of the authority context; rejects cross-lineage composition by construction. About which execution acted, not identity 'sub'.",
+      "tags": ["pic", "proof of continuity", "por", "lineage", "monotonic", "authority", "continuity", "execution", "gallo"],
+      "href": "https://github.com/ngallo/pic-model"
+    },
+    {
+      "key": "cedar",
+      "label": "Cedar Policy Language",
+      "org": "AWS/OSS",
+      "criteria": "An open policy language and evaluation engine: permit/forbid over principal, action, resource, context, with a formally-verified evaluator. The policy substrate under RAR-Cedar, OVID-ME, and Carapace. Authorization, not identity.",
+      "tags": ["cedar", "policy", "permit", "forbid", "principal", "action", "resource", "authorization", "verified"],
+      "href": "https://www.cedarpolicy.com/"
+    },
+    {
+      "key": "rfc8176_amr",
+      "label": "RFC 8176 — AMR Values",
+      "org": "IETF",
+      "criteria": "Authentication Method Reference values for the 'amr' claim: 'pwd', 'otp', 'mfa', 'hwk', 'face', etc. Describes HOW a 'sub' authenticated, complementing 'acr'.",
+      "tags": ["amr", "acr", "authentication method", "mfa", "otp", "pwd", "sub"],
+      "href": "https://www.rfc-editor.org/rfc/rfc8176"
+    },
+    {
+      "key": "rfc9470_step_up",
+      "label": "RFC 9470 — Step-Up Auth",
+      "org": "IETF OAuth",
+      "criteria": "OAuth 2.0 Step-Up Authentication Challenge. Lets a resource server demand higher 'acr'/'auth_time' mid-flow via insufficient_user_authentication. About re-authenticating a 'sub', not defining it.",
+      "tags": ["step-up", "acr", "auth_time", "insufficient_user_authentication", "sub", "oauth"],
+      "href": "https://www.rfc-editor.org/rfc/rfc9470"
+    },
+    {
+      "key": "authzen",
+      "label": "AuthZEN",
+      "org": "OIDF",
+      "criteria": "OpenID AuthZEN Authorization API. A standard request/response contract between a Policy Enforcement Point (PEP) and an external Policy Decision Point (PDP): the app asks 'can this subject do this action on this resource in this context' and gets an allow/deny. Externalized authorization, the 'OAuth for authz decisions', decouples policy from application code.",
+      "tags": ["authzen", "authorization api", "pdp", "pep", "externalized authorization", "policy decision point", "policy enforcement point", "allow deny", "abac", "pbac", "can this user do this", "externalize authz"],
+      "href": "https://openid.net/wg/authzen/"
+    },
+    {
+      "key": "shared_signals_ssf",
+      "label": "Shared Signals Framework (SSF)",
+      "org": "OIDF",
+      "criteria": "OpenID Shared Signals Framework. A push channel for security event tokens (SETs) between providers and relying parties so that session-revoked, credential-changed, and account-disabled events propagate in real time. The transport under CAEP and RISC; the backbone of continuous access and instant cross-domain revocation.",
+      "tags": ["ssf", "shared signals", "security event token", "set", "caep", "risc", "real-time revocation", "session revoked", "detect a stolen session", "kill access when someone is fired", "continuous", "push events"],
+      "href": "https://openid.net/wg/sharedsignals/"
+    },
+    {
+      "key": "caep",
+      "label": "CAEP",
+      "org": "OIDF",
+      "criteria": "Continuous Access Evaluation Protocol, a profile of the Shared Signals Framework. Streams session-lifecycle and risk-change events (token claims changed, session revoked, device compliance change, assurance-level change) keyed to a subject so relying parties re-evaluate access mid-session instead of only at login. The mechanism behind continuous access and zero-standing-session trust.",
+      "tags": ["caep", "continuous access", "continuous access evaluation", "session revoked", "re-evaluate mid-session", "kill access the moment someone is fired", "revoke a token mid-flight", "shared signals", "risk change"],
+      "href": "https://openid.net/specs/openid-caep-1_0.html"
+    },
+    {
+      "key": "risc",
+      "label": "RISC",
+      "org": "OIDF",
+      "criteria": "Risk and Incident Sharing and Collaboration, a profile of the Shared Signals Framework. Cross-provider account-security events, account takeover detected, credential compromised, account disabled, so that a compromise at one provider can trigger protective action everywhere. The account-security sibling of CAEP.",
+      "tags": ["risc", "account takeover", "credential compromised", "incident sharing", "shared signals", "cross-provider", "account disabled", "breach signal"],
+      "href": "https://openid.net/wg/sharedsignals/"
+    },
+    {
+      "key": "tbac",
+      "label": "Token-Based Access Control (TBAC)",
+      "org": "Gluu / community",
+      "criteria": "An access-control model that uses the rich context bundled across multiple tokens, JWT access tokens, verifiable credentials, workload identity tokens, transaction tokens, as the primary input to a policy decision. Proposed as the successor to RBAC and ABAC for multi-token, agent-heavy environments. The 'decide from the tokens you are already carrying' approach.",
+      "tags": ["tbac", "token based access control", "rbac", "abac", "pbac", "policy from tokens", "multi-token", "gluu", "schwartz", "successor to rbac", "authorization model"],
+      "href": "https://gluu.org/office-episodes/episode-100-is-tbac-the-next-big-thing/"
+    },
+    {
+      "key": "nhi_governance",
+      "label": "Non-Human Identity (NHI) Governance",
+      "org": "industry",
+      "criteria": "Lifecycle, discovery, ownership, and access governance for the non-person identities that now outnumber humans: service accounts, API keys, OAuth clients, bots, scripts, and AI agents. Answers 'who owns this API key', 'which service accounts still have access after their owner left', and how to attest and deprovision machine identity at scale.",
+      "tags": ["nhi", "non-human identity", "service accounts", "api keys", "machine identity", "who owns this api key", "orphaned access", "bots", "workload governance", "secrets sprawl", "deprovision", "still have access after they left"],
+      "href": "https://www.identityatthecenter.com/"
+    },
+    {
+      "key": "mcp_authorization",
+      "label": "MCP Authorization",
+      "org": "Anthropic / IETF",
+      "criteria": "The authorization layer of the Model Context Protocol. MCP servers act as OAuth 2.1 resource servers; an AI agent (the MCP client) obtains scoped, user-consented access to call tools and read resources on the user's behalf. The 'how does an MCP server know who is calling and what they may do' story for agentic tool use, with dynamic client registration and AS metadata discovery.",
+      "tags": ["mcp", "model context protocol", "mcp authorization", "agent tool access", "grant an ai assistant permission", "oauth 2.1", "dynamic client registration", "resource server", "tool calling", "agentic", "read my calendar"],
+      "href": "https://modelcontextprotocol.io/specification/basic/authorization"
+    },
+    {
+      "key": "agentic_ai_identity",
+      "label": "Agentic AI Identity",
+      "org": "OIDF AIIM / IETF",
+      "criteria": "The emerging body of work on how autonomous AI agents are identified, authenticated, delegated to, contained, and held accountable: agent identity lifecycle, authority limits, delegation chains, session termination, and 'stop an agent from doing what its human principal cannot'. Coordinated in the OpenID AI Identity Management community group and adjacent IETF drafts.",
+      "tags": ["agentic", "ai agent identity", "let an ai agent act on my behalf", "agent authority", "delegation", "accountability", "who is accountable when an agent", "agent containment", "autonomous agent", "aiim", "agent on behalf of user"],
+      "href": "https://openid.net/community/artificial-intelligence-identity-management/"
+    },
+    {
+      "key": "ai_identity_control_plane",
+      "label": "AI Identity Control Plane",
+      "org": "industry (Teixeira)",
+      "criteria": "A proposed dedicated management plane for AI-agent identities, analogous to how cloud IAM is a control plane separate from the data plane. Centralizes issuance, discovery, authority scoping, monitoring, and revocation of agent identities across an enterprise. A governance architecture, not a wire protocol.",
+      "tags": ["ai identity control plane", "control plane", "agent governance", "teixeira", "agent management", "centralized agent identity", "observability", "agent lifecycle"],
+      "href": "https://www.identityatthecenter.com/"
+    },
+    {
+      "key": "intent_based_access",
+      "label": "Intent-Based Access Control (IBAC)",
+      "org": "industry",
+      "criteria": "An access-control approach that factors in the declared intent or purpose of a requester, especially an AI agent, granting access only when the stated purpose matches what was authorized. 'Only let the agent read this data if its purpose matches what I approved.' Related to MCP authorization and purpose-bound tokens.",
+      "tags": ["ibac", "intent-based access", "purpose", "declared intent", "agent intent", "purpose binding", "only if purpose matches", "purpose limitation"],
+      "href": "https://www.identityatthecenter.com/"
+    },
+    {
+      "key": "zero_standing_privilege",
+      "label": "Zero Standing Privilege / JIT",
+      "org": "industry",
+      "criteria": "Eliminating permanently-assigned privileged access in favor of just-in-time grants: access is provisioned only at the moment a task needs it, for the exact duration, then revoked. 'Make sure no one has standing admin access' and 'grant privilege only while the task runs.' Operationalized by modern PAM and TBAC.",
+      "tags": ["zero standing privilege", "zsp", "jit", "just-in-time access", "no standing admin", "ephemeral access", "grant only while task runs", "least privilege", "pam", "time-bound"],
+      "href": "https://www.identityatthecenter.com/"
+    },
+    {
+      "key": "pam_modern",
+      "label": "Privileged Access Management (PAM)",
+      "org": "industry",
+      "criteria": "The discipline and tooling for controlling, brokering, and auditing privileged access to sensitive systems, evolving for cloud-native and AI-agent environments: just-in-time provisioning, session brokering, orphaned-token cleanup, and PAM for non-human and agent identities. The enforcement arm of zero standing privilege.",
+      "tags": ["pam", "privileged access management", "admin access", "session brokering", "lock down production access", "vaulting", "least privilege", "jit provisioning", "privilege"],
+      "href": "https://gluu.org/office-episodes/episode-97-patterns-and-anti-patterns-in-privileged-access-management-pam/"
+    },
+    {
+      "key": "itdr",
+      "label": "Identity Threat Detection & Response (ITDR)",
+      "org": "industry (Gartner)",
+      "criteria": "A security discipline for detecting, investigating, and responding to identity-based attacks in real time: credential stuffing, session hijacking, MFA fatigue, and lateral movement using legitimate accounts. 'Detect when an attacker is using a real employee account' and catch identity-based lateral movement before it becomes a breach.",
+      "tags": ["itdr", "identity threat detection", "session hijacking", "attacker using a real account", "lateral movement", "credential stuffing", "detect stolen session", "anomaly", "identity attack", "posture"],
+      "href": "https://gluu.org/office-episodes/episode-92-tracking-identity-threats-before-they-track-you/"
+    },
+    {
+      "key": "ipsie",
+      "label": "IPSIE",
+      "org": "OIDF",
+      "criteria": "Interoperability Profiling for Secure Identity in the Enterprise. OpenID profiles that pin down exactly how OAuth, OIDC, SCIM, Shared Signals, and passkeys must be used so two independent enterprise IAM implementations actually interoperate, including sign-in, lifecycle provisioning, token revocation, and risk signals. 'Make our deployment actually work with a vendor we just bought.'",
+      "tags": ["ipsie", "interoperability", "enterprise sso", "secure identity enterprise", "profile", "oauth oidc scim interop", "make it work with a vendor", "lifecycle", "single control plane"],
+      "href": "https://openid.net/wg/ipsie/"
+    },
+    {
+      "key": "global_token_revocation",
+      "label": "Global Token Revocation",
+      "org": "IETF OAuth",
+      "criteria": "draft-ietf-oauth-global-token-revocation. Propagates a single revocation event across every authorization server and resource server in a federation so that firing an employee or detecting a breach revokes their tokens everywhere at once. 'Revoke a token that has already been issued, everywhere it might be used.'",
+      "tags": ["global token revocation", "revoke everywhere", "kill access everywhere", "federation revocation", "terminate access", "single revocation event", "oauth", "fired employee"],
+      "href": "https://datatracker.ietf.org/doc/draft-ietf-oauth-global-token-revocation/"
+    },
+    {
+      "key": "oauth_status_list",
+      "label": "OAuth Status List",
+      "org": "IETF OAuth",
+      "criteria": "draft-ietf-oauth-status-list. A compact, privacy-preserving bitstring for checking whether a JWT or verifiable credential has been revoked or suspended, without revealing which specific credential is being checked. The lightweight revocation-status alternative to a push channel.",
+      "tags": ["status list", "revocation status", "credential revoked", "bitstring", "privacy-preserving revocation", "jwt status", "vc revocation", "suspended"],
+      "href": "https://datatracker.ietf.org/doc/draft-ietf-oauth-status-list/"
+    },
+    {
+      "key": "openid_provider_commands",
+      "label": "OpenID Provider Commands",
+      "org": "OIDF (Hardt/McGuinness)",
+      "criteria": "A backchannel protocol for an OpenID Provider to send command tokens to relying parties, activate, suspend, archive, delete, or unauthorize an account, solving account-lifecycle propagation at scale. 'When I disable a user centrally, make every connected app act on it.'",
+      "tags": ["openid provider commands", "opc", "account lifecycle", "suspend account", "delete account", "backchannel command", "deprovision everywhere", "hardt", "mcguinness"],
+      "href": "https://gluu.org/office-episodes/episode-99-openid-provider-commands-new-jwt-tokens-for-rp-acct-mgt/"
+    },
+    {
+      "key": "fapi2",
+      "label": "FAPI 2.0",
+      "org": "OIDF",
+      "criteria": "Financial-grade API security profile. A high-assurance profile of OAuth that mandates sender-constrained tokens (DPoP or mTLS), pushed authorization requests, and signed responses for banking, healthcare, and government APIs. The 'gold standard' hardened OAuth profile.",
+      "tags": ["fapi", "financial-grade", "high assurance", "open banking", "sender-constrained", "dpop", "par", "hardened oauth profile", "regulated"],
+      "href": "https://openid.net/wg/fapi/"
+    },
+    {
+      "key": "oauth21",
+      "label": "OAuth 2.1",
+      "org": "IETF OAuth",
+      "criteria": "draft-ietf-oauth-v2-1. The consolidated, security-hardened successor to OAuth 2.0: removes the implicit grant and password grant, mandates PKCE for all clients, and tightens redirect-URI matching. The baseline MCP authorization builds on.",
+      "tags": ["oauth 2.1", "oauth21", "pkce mandatory", "no implicit", "consolidated oauth", "hardened", "baseline", "mcp baseline"],
+      "href": "https://datatracker.ietf.org/doc/html/draft-ietf-oauth-v2-1"
+    },
+    {
+      "key": "passkeys_webauthn",
+      "label": "Passkeys / WebAuthn / FIDO2",
+      "org": "FIDO Alliance / W3C",
+      "criteria": "Phishing-resistant, passwordless authentication using device-bound public-key credentials. WebAuthn is the browser API, FIDO2/CTAP the authenticator protocol, passkeys the synced consumer form. 'Log in without a password' and 'stop credential phishing.' Now focused on recovery flows and enterprise rollout.",
+      "tags": ["passkeys", "webauthn", "fido2", "ctap", "passwordless", "phishing-resistant", "login without a password", "public key credential", "authenticator", "recovery"],
+      "href": "https://fidoalliance.org/passkeys/"
+    },
+    {
+      "key": "eudiw_arf",
+      "label": "EU Digital Identity Wallet (EUDIW / ARF)",
+      "org": "European Commission",
+      "criteria": "The EU Digital Identity Architecture and Reference Framework mandating interoperable identity wallets for EU citizens, holding PID and attestations (mDL, diplomas) with selective disclosure. 'A government-backed wallet that proves who I am and lets me reveal only what is needed.'",
+      "tags": ["eudiw", "eu wallet", "arf", "digital identity wallet", "pid", "eidas", "selective disclosure", "government wallet", "europe", "citizen identity"],
+      "href": "https://digital-strategy.ec.europa.eu/en/policies/eudi-wallet"
+    },
+    {
+      "key": "mdl_iso18013",
+      "label": "Mobile Driver's License (mDL, ISO 18013-5)",
+      "org": "ISO / AAMVA",
+      "criteria": "ISO 18013-5 mobile driving licence: a digital driver's licence on a phone with selective disclosure, so you can prove you are over 18 or licensed without showing your full document. The first mass-deployed selective-disclosure credential, presented via OpenID4VP.",
+      "tags": ["mdl", "mobile drivers license", "iso 18013-5", "prove over 18", "age verification", "selective disclosure", "aamva", "digital id", "prove without revealing"],
+      "href": "https://www.iso.org/standard/69084.html"
+    },
+    {
+      "key": "openid_federation",
+      "label": "OpenID Federation",
+      "org": "OIDF",
+      "criteria": "Large-scale multi-party federation without pre-registration: entities publish signed metadata and establish trust through trust chains anchored at a trust anchor. Used for EUDIW, academic and government federations. 'Establish trust between thousands of parties without registering each pair.'",
+      "tags": ["openid federation", "federation", "trust chain", "trust anchor", "entity statement", "multi-party trust", "without pre-registration", "metadata"],
+      "href": "https://openid.net/specs/openid-federation-1_0.html"
+    },
+    {
+      "key": "c2pa",
+      "label": "C2PA — Content Provenance",
+      "org": "C2PA / CAI",
+      "criteria": "Coalition for Content Provenance and Authenticity. Cryptographically signed provenance metadata attached to media so you can verify origin and edit history and detect deepfakes. 'Prove this photo was not generated or altered by AI.' Identity of content rather than of people.",
+      "tags": ["c2pa", "content provenance", "authenticity", "deepfake", "prove this photo is real", "media provenance", "content credentials", "watermarking", "chain of custody"],
+      "href": "https://c2pa.org/"
+    },
+    {
+      "key": "death_of_identity",
+      "label": "Death of Identity (thesis)",
+      "org": "Bob Blakley",
+      "criteria": "A provocative thesis that the traditional notion of a persistent, verifiable human identity is dissolving under AI agents, delegation chains, and post-quantum pressure, forcing a rethink of what authentication is even for. 'What does identity even mean when the thing acting is an AI, not a person?' A concept, not a spec.",
+      "tags": ["death of identity", "post-identity", "blakley", "philosophy", "what is identity", "future of identity", "agent era", "rethink authentication"],
+      "href": "https://gluu.org/identerati-office-hours-episodes/"
+    },
+    {
+      "key": "prompt_injection",
+      "label": "Prompt Injection / AI Trust Boundaries",
+      "org": "OWASP / research",
+      "criteria": "The vulnerability where malicious content in an AI agent's input hijacks its behavior and pushes it to act outside its authorized scope. Treated as an access-control and trust-boundary problem: untrusted content must never escalate an agent's authority. 'Stop a malicious document from making my agent misbehave.'",
+      "tags": ["prompt injection", "ai trust boundary", "untrusted content", "jailbreak", "agent hijack", "owasp llm", "escalate authority", "malicious input", "guardrails"],
+      "href": "https://owasp.org/www-project-top-10-for-large-language-model-applications/"
+    },
+    {
+      "key": "decentralized_claims",
+      "label": "Decentralized Claims / Dataspaces",
+      "org": "Eclipse / iSHARE",
+      "criteria": "Credential-based data access in decentralized dataspaces: cross-enterprise data sharing where trust is asserted through verifiable credentials and JWT-based access rather than pre-established bilateral relationships. Seen in Eclipse Dataspace Protocol and iSHARE. 'Share data across companies that have never met, using credentials for trust.'",
+      "tags": ["dataspace", "decentralized claims", "eclipse", "ishare", "cross-enterprise data", "credential-based access", "data sharing", "b2b trust", "sovereignty"],
+      "href": "https://projects.eclipse.org/projects/technology.dataspace-protocol"
+    }
+  ]
+}

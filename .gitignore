@@ -1,0 +1,17 @@
+# Python env
+.venv/
+__pycache__/
+*.pyc
+
+# Model weights & checkpoints (too big for git; see README to build or download)
+training/laya-identity-ft/
+*.safetensors
+
+# Server runtime
+server/*.pid
+server/serve.log
+server/*.log
+
+# OS
+.DS_Store
+training/train.log

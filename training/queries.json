@@ -1,0 +1,428 @@
+{
+  "_doc": "Curated natural-language queries per card. These are things a human would TYPE or SAY when looking for that standard, phrased conceptually so a semantic model beats string search. Keep each query a real phrase, not the card name. 4-8 per card for well-known cards.",
+
+  "oidc_core": [
+    "how do I get a stable user id after login",
+    "the claim that identifies the logged in person",
+    "single sign on with an id token",
+    "prove which user just authenticated to my app",
+    "privacy preserving per-app user identifier"
+  ],
+  "rfc9068_jwt_at": [
+    "what does the sub claim mean in an access token",
+    "standard shape of an oauth bearer token",
+    "read the client and scope out of an access token"
+  ],
+  "rfc7519_jwt": [
+    "the base spec that defines jwt claims",
+    "what are iss aud exp and sub",
+    "signed json token format"
+  ],
+  "rfc7515_jws": [
+    "how do I sign a token payload",
+    "verify a signature on a json web token",
+    "the alg and kid header fields"
+  ],
+  "rfc7516_jwe": [
+    "encrypt a token so only the recipient can read it",
+    "confidential json payload",
+    "hide claims from intermediaries"
+  ],
+  "rfc7517_jwk": [
+    "publish my public keys for token verification",
+    "the jwks endpoint",
+    "rotate signing keys"
+  ],
+  "rfc7518_jwa": [
+    "which signing algorithms are allowed",
+    "es256 vs rs256 registry"
+  ],
+  "rfc6749_oauth2": [
+    "the original delegated authorization framework",
+    "let an app access my data without my password",
+    "authorization code grant basics"
+  ],
+  "rfc8693_token_exchange": [
+    "swap one token for another for a downstream service",
+    "the actor claim for delegation",
+    "impersonate a user in a service call",
+    "act on behalf of another subject"
+  ],
+  "rfc9396_rar": [
+    "fine grained permissions beyond scopes",
+    "say exactly transfer fifty dollars to account X",
+    "structured authorization details in the request",
+    "rich authorization request"
+  ],
+  "rfc9449_dpop": [
+    "stop a stolen access token from being replayed",
+    "bind a token to the client's key",
+    "proof of possession at the application layer",
+    "the cnf jkt thumbprint"
+  ],
+  "rfc8705_mtls": [
+    "certificate bound access tokens",
+    "mutual tls client authentication",
+    "sender constrain a token with a client cert"
+  ],
+  "rfc7662_introspection": [
+    "how does a resource server check an opaque token",
+    "ask the auth server if a token is still active",
+    "look up who a token belongs to"
+  ],
+  "rfc7009_revocation": [
+    "invalidate a refresh token",
+    "revoke a token the user signed out",
+    "the revocation endpoint"
+  ],
+  "rfc7636_pkce": [
+    "protect the authorization code on a mobile app",
+    "code verifier and challenge",
+    "stop an intercepted auth code from being used"
+  ],
+  "rfc7523_jwt_bearer": [
+    "service to service auth with a signed assertion",
+    "exchange a jwt for an access token",
+    "machine client authentication with a jwt"
+  ],
+  "rfc9101_jar": [
+    "sign the authorization request itself",
+    "tamper proof request object"
+  ],
+  "rfc9126_par": [
+    "push authorization parameters to the server first",
+    "keep request params off the front channel"
+  ],
+  "rfc9207_iss_response": [
+    "prevent oauth mix-up attacks",
+    "know which auth server answered"
+  ],
+  "rfc8414_as_metadata": [
+    "discover the authorization server endpoints",
+    "the well-known oauth configuration document"
+  ],
+  "oidc_discovery": [
+    "find the openid provider configuration",
+    "does this provider use pairwise subject ids",
+    "auto configure an oidc client"
+  ],
+  "oidc_userinfo": [
+    "get profile claims for the logged in user",
+    "endpoint that returns user attributes by sub"
+  ],
+  "rfc9700_bcp": [
+    "current best practices for securing oauth",
+    "how should I harden my oauth deployment"
+  ],
+  "saml2": [
+    "old xml single sign on",
+    "the nameid subject in a saml assertion",
+    "enterprise sso before oidc"
+  ],
+  "scim2": [
+    "automatically provision and deprovision users",
+    "sync employees into a saas app",
+    "the standard user provisioning protocol"
+  ],
+  "verifiable_credentials": [
+    "cryptographically signed claims I hold in a wallet",
+    "issuer signs a credential about me",
+    "present a credential a verifier can check offline"
+  ],
+  "did_core": [
+    "an identifier not owned by any central registry",
+    "self sovereign identifier that resolves to keys",
+    "decentralized identifier"
+  ],
+  "x509": [
+    "certificate authority signed identity",
+    "the subject and san on a tls certificate",
+    "pki chain to a trust anchor"
+  ],
+  "spiffe_svid": [
+    "give each workload a cryptographic identity",
+    "short lived identity document for a service",
+    "one workload calling another safely",
+    "kubernetes service identity"
+  ],
+  "wimse_s2s": [
+    "standard workload to workload authentication",
+    "the workload identity token",
+    "service calls another service across systems"
+  ],
+  "wimse_ai_agent": [
+    "treat an ai agent as a workload with identity",
+    "workload identity applied to agents"
+  ],
+  "wimse_ect": [
+    "carry which workflow step an agent call belongs to",
+    "execution context for an agent invocation"
+  ],
+  "aiagent_auth": [
+    "let an ai agent act on my behalf",
+    "authenticate an autonomous agent",
+    "api keys are the wrong way to identify agents",
+    "how should agents authenticate as workloads"
+  ],
+  "spiffe_client_auth": [
+    "use a spiffe id as an oauth client credential",
+    "one metadata doc for a whole tree of agents",
+    "wildcard workload identity for oauth"
+  ],
+  "rar_cedar": [
+    "express an agent mandate as cedar policy",
+    "prove a child mandate is a subset of the parent",
+    "cedar profile for authorization details"
+  ],
+  "id_jag": [
+    "cross app access without logging in again",
+    "carry identity across auth server boundaries",
+    "let one app act for a user in another app"
+  ],
+  "oauth_actor_profile": [
+    "the act claim structure for delegation",
+    "distinguish a human from an agent acting",
+    "classify whether the actor is an ai agent",
+    "sub_profile entity type on the actor"
+  ],
+  "txn_tokens": [
+    "track one user's request across five microservices",
+    "preserve the original caller through a call chain",
+    "short lived internal token inside a trust domain",
+    "transaction token for microservices"
+  ],
+  "jose_hpke": [
+    "seal a token to a recipient's public key",
+    "hybrid public key encryption for jose",
+    "encrypt a mandate per hop"
+  ],
+  "cose": [
+    "sign cbor payloads for constrained devices",
+    "binary token signing for iot"
+  ],
+  "cwt": [
+    "the cbor version of a jwt",
+    "compact binary token with a sub claim"
+  ],
+  "sd_jwt": [
+    "reveal only some claims from a token",
+    "selective disclosure of jwt claims",
+    "hide the claims I don't want to share"
+  ],
+  "sd_jwt_vc": [
+    "selective disclosure verifiable credential",
+    "wallet credential with key binding"
+  ],
+  "oid4vci": [
+    "how a wallet gets a credential from an issuer",
+    "issue a verifiable credential over oauth"
+  ],
+  "oid4vp": [
+    "how a verifier requests a credential from a wallet",
+    "present a wallet credential to a website",
+    "prove a claim without revealing my whole identity"
+  ],
+  "caep_ssf": [
+    "stream session revoked events to relying parties",
+    "continuous access evaluation over shared signals"
+  ],
+  "gnap": [
+    "a from scratch alternative to oauth",
+    "grant negotiation protocol",
+    "single grant endpoint with key bound access"
+  ],
+  "mcp_auth": [
+    "how an mcp server authorizes a caller",
+    "oauth for model context protocol tools"
+  ],
+  "ft_jwt": [
+    "stacked delegated jwts in one header",
+    "chain of narrowing tokens client to client",
+    "french toast jwt"
+  ],
+  "waffles": [
+    "delegated jwt chain for agents and workloads",
+    "wimse delegation with authorization details attenuation"
+  ],
+  "ovid": [
+    "cryptographic identity for my sub agents",
+    "pubkey anchored token carrying a cedar mandate",
+    "sign a mandate so a child agent cannot tamper with it"
+  ],
+  "ovid_me": [
+    "evaluate whether a child mandate is within the parent",
+    "cedar subset proof engine for agent mandates"
+  ],
+  "carapace": [
+    "hard ceiling on what tools an agent may call",
+    "deployment level allow deny for agent actions"
+  ],
+  "agentic_jwt_unforge": [
+    "bind each api call to the agent's intent",
+    "intent token per agent call",
+    "agent code fingerprint identity"
+  ],
+  "pic_model": [
+    "prove which execution actually caused this call",
+    "authority continuity across hops",
+    "reject mixing two delegation lineages"
+  ],
+  "cedar": [
+    "policy language with permit and forbid",
+    "formally verified authorization engine",
+    "principal action resource context policy"
+  ],
+  "rfc8176_amr": [
+    "how did the user authenticate, mfa or password",
+    "authentication method reference values"
+  ],
+  "rfc9470_step_up": [
+    "force re-authentication for a sensitive action",
+    "demand stronger auth mid session",
+    "step up to mfa before a transfer"
+  ],
+  "authzen": [
+    "ask an external service can this user do this action",
+    "decouple authorization decisions from my app code",
+    "standard api between pep and pdp",
+    "externalized authorization decision api"
+  ],
+  "shared_signals_ssf": [
+    "push security events between identity providers",
+    "tell relying parties a session was revoked in real time",
+    "security event token transport",
+    "propagate a compromise signal across providers"
+  ],
+  "caep": [
+    "kill access the moment someone is fired",
+    "re-evaluate authorization during a session not just at login",
+    "revoke a token mid-flight when risk changes",
+    "continuous access evaluation"
+  ],
+  "risc": [
+    "share account takeover signals between providers",
+    "notify everyone when a credential is compromised",
+    "cross provider account security events"
+  ],
+  "tbac": [
+    "decide access from the tokens the caller already carries",
+    "the successor to rbac and abac for multi token environments",
+    "token based access control",
+    "policy input from jwts and credentials and workload tokens"
+  ],
+  "nhi_governance": [
+    "find all service accounts that still have access after someone left",
+    "who owns this api key",
+    "govern machine identities and bots at scale",
+    "non human identity lifecycle and ownership"
+  ],
+  "mcp_authorization": [
+    "grant an ai assistant permission to read my calendar",
+    "how does an mcp server know who is calling",
+    "scoped consent for agent tool use",
+    "oauth authorization for model context protocol"
+  ],
+  "agentic_ai_identity": [
+    "how do we identify and govern autonomous ai agents",
+    "who is accountable when an agent does something bad",
+    "limit what an ai agent is allowed to do",
+    "identity lifecycle for ai agents"
+  ],
+  "ai_identity_control_plane": [
+    "a central management plane for agent identities",
+    "issue and revoke agent identities across the enterprise",
+    "control plane for ai agents"
+  ],
+  "intent_based_access": [
+    "only let the agent read data if its purpose matches what I approved",
+    "grant access based on declared intent",
+    "purpose bound access for agents"
+  ],
+  "zero_standing_privilege": [
+    "make sure no one has standing admin access",
+    "grant privilege only while the task is running",
+    "eliminate always-on admin rights",
+    "just in time access"
+  ],
+  "pam_modern": [
+    "lock down who can get admin access to production",
+    "broker and audit privileged sessions",
+    "privileged access management for agents"
+  ],
+  "itdr": [
+    "detect when an attacker is using a real employee account",
+    "catch identity based lateral movement before a breach",
+    "spot a hijacked session in real time",
+    "identity threat detection and response"
+  ],
+  "ipsie": [
+    "make our sso actually work with a vendor we just bought",
+    "enterprise identity interoperability profile",
+    "guarantee two iam systems interoperate"
+  ],
+  "global_token_revocation": [
+    "revoke a token everywhere it might be used",
+    "one revocation event across the whole federation",
+    "terminate all access when someone is fired"
+  ],
+  "oauth_status_list": [
+    "check if a credential was revoked without revealing which one",
+    "compact privacy preserving revocation status",
+    "is this jwt still valid"
+  ],
+  "openid_provider_commands": [
+    "when I disable a user centrally make every app act on it",
+    "backchannel command to suspend an account everywhere",
+    "propagate account lifecycle to relying parties"
+  ],
+  "fapi2": [
+    "highest assurance oauth profile for banking",
+    "financial grade api security",
+    "mandate dpop and par for regulated apis"
+  ],
+  "oauth21": [
+    "the hardened consolidated version of oauth",
+    "oauth with pkce required and no implicit flow"
+  ],
+  "passkeys_webauthn": [
+    "log in without a password",
+    "phishing resistant authentication",
+    "passkeys and webauthn",
+    "device bound public key login"
+  ],
+  "eudiw_arf": [
+    "the eu government digital identity wallet",
+    "european identity wallet with selective disclosure",
+    "eidas 2 wallet"
+  ],
+  "mdl_iso18013": [
+    "prove I'm over 18 without showing my birthday",
+    "digital driver's license on my phone",
+    "mobile drivers license standard"
+  ],
+  "openid_federation": [
+    "establish trust between thousands of parties without registering each one",
+    "signed metadata trust chains",
+    "large scale federation"
+  ],
+  "c2pa": [
+    "prove this photo wasn't generated or edited by ai",
+    "content provenance and authenticity",
+    "detect deepfakes with signed provenance"
+  ],
+  "death_of_identity": [
+    "what does identity even mean in a world of ai agents",
+    "is traditional identity dying",
+    "post identity architecture"
+  ],
+  "prompt_injection": [
+    "stop a malicious document from making my agent misbehave",
+    "keep untrusted input from escalating agent authority",
+    "ai trust boundary and prompt injection"
+  ],
+  "decentralized_claims": [
+    "share data across companies using credentials for trust",
+    "credential based access in a dataspace",
+    "cross enterprise data sharing without pre-established trust"
+  ]
+}
