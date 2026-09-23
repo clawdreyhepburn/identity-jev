@@ -112,7 +112,7 @@ def collate(items, pad_id):
 
 
 @torch.no_grad()
-def score_query(query, batch=24):
+def score_query(query, batch=8, on_progress=None):
     load_model()
     items = []
     for c in CARDS:
@@ -122,17 +122,18 @@ def score_query(query, batch=24):
             _cfg["max_len"], _cfg["head_max_len"],
         )
         if len(markers) != len(render_options({"t": "noul", "crit": {}})):
-            items.append(None)
-        else:
-            items.append({"ids": seq, "markers": markers, "key": c["key"]})
+            continue
+        items.append({"ids": seq, "markers": markers, "key": c["key"]})
 
     results = {}
+    total = len(items)
+    done = 0
+    if on_progress:
+        on_progress(0, total)
     t0 = time.time()
     with _lock:
-        for i in range(0, len(items), batch):
-            chunk = [x for x in items[i:i + batch] if x]
-            if not chunk:
-                continue
+        for i in range(0, total, batch):
+            chunk = items[i:i + batch]
             ids, att, mpos, mmask = collate(chunk, _tok.pad_token_id)
             logits, _ = _model(ids.to(_device), att.to(_device),
                                mpos.to(_device), mmask.to(_device),
@@ -140,10 +141,12 @@ def score_query(query, batch=24):
             logits = logits.float() / _temp
             mask = mmask.to(_device)
             probs = torch.softmax(logits.masked_fill(~mask, -1e4), -1)
-            # noul: P(true) is index 1
             ptrue = probs[:, 1].cpu().tolist()
             for j, it in enumerate(chunk):
                 results[it["key"]] = float(ptrue[j])
+            done += len(chunk)
+            if on_progress:
+                on_progress(done, total)
     dt = round((time.time() - t0) * 1000)
     out = [{"key": c["key"], "p": results.get(c["key"], 0.0)} for c in CARDS]
     return {"via": "laya-ft" if _tuned else "laya-base", "ms": dt, "tuned": _tuned, "results": out}
@@ -193,6 +196,10 @@ class Handler(BaseHTTPRequestHandler):
         self.end_headers()
         self.wfile.write(data)
 
+    def _stream(self, obj):
+        self.wfile.write((json.dumps(obj) + "\n").encode())
+        self.wfile.flush()
+
     def do_POST(self):
         if self.path != "/filter":
             return self._send(404, json.dumps({"error": "not found"}))
@@ -202,12 +209,22 @@ class Handler(BaseHTTPRequestHandler):
             query = (json.loads(raw or b"{}").get("query") or "").strip()
         except Exception:
             return self._send(400, json.dumps({"error": "bad json"}))
+        self.send_response(200)
+        self.send_header("content-type", "application/x-ndjson")
+        self.send_header("cache-control", "no-cache")
+        self.send_header("access-control-allow-origin", "*")
+        self.send_header("connection", "close")
+        self.end_headers()
         if not query:
-            return self._send(200, json.dumps({"via": "laya", "results": []}))
+            return self._stream({"type": "done", "via": "laya", "results": []})
         try:
-            return self._send(200, json.dumps(score_query(query)))
+            payload = score_query(query, on_progress=lambda done, total: self._stream(
+                {"type": "progress", "done": done, "total": total}
+            ))
+            payload["type"] = "done"
+            self._stream(payload)
         except Exception as e:
-            return self._send(500, json.dumps({"error": str(e)}))
+            self._stream({"type": "error", "error": str(e)})
 
     def log_message(self, *a):
         pass

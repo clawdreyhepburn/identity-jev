@@ -38,10 +38,22 @@ function shortCrit(text) {
   return t.length <= 120 ? t : t.slice(0, 118).replace(/\s+\S*$/, '') + '…';
 }
 
+function cardFamily(org) {
+  const o = String(org || '').toLowerCase();
+  if (o.includes('oidf')) return 'oidf';
+  if (o.includes('ietf')) return 'ietf';
+  if (o.includes('w3c') || o.includes('fido')) return 'w3c';
+  if (/oasis|cncf|\boss\b|eclipse|gluu|ishare/.test(o)) return 'oss';
+  if (/iso|european|c2pa|aamva/.test(o)) return 'std';
+  if (/industry|anthropic|aws|nitro/.test(o)) return 'industry';
+  return 'research';
+}
+
 function cardNode(c) {
   const div = document.createElement('div');
   div.className = 'card pile';
   div.dataset.key = c.key;
+  div.dataset.family = cardFamily(c.org);
   div.style.setProperty('--x', '-4000px');
   div.style.setProperty('--y', '0px');
   div.style.setProperty('--r', '0deg');
@@ -61,15 +73,53 @@ function cardNode(c) {
 }
 
 // ---- scoring: real fine-tuned Laya via the local server -------------------
-async function scoreLaya(query) {
+function setProgress(done, total) {
+  const wrap = $('#layaProgress');
+  const fill = $('#layaFill');
+  const count = $('#layaCount');
+  if (!wrap || !fill || !count) return;
+  wrap.hidden = false;
+  const pct = total ? Math.min(100, Math.round((done / total) * 100)) : 0;
+  fill.style.width = `${pct}%`;
+  count.textContent = `${done} / ${total}`;
+}
+function hideProgress() {
+  const wrap = $('#layaProgress');
+  if (wrap) wrap.hidden = true;
+}
+
+async function scoreLaya(query, onProgress) {
   const r = await fetch(`${API}/filter`, {
     method: 'POST',
     headers: { 'content-type': 'application/json' },
     body: JSON.stringify({ query }),
   });
   if (!r.ok) throw new Error(`server ${r.status}`);
-  const j = await r.json();
-  return j; // {via, ms, tuned, results:[{key,p}]}
+  if (!r.body) {
+    const j = await r.json();
+    return j;
+  }
+  const reader = r.body.getReader();
+  const dec = new TextDecoder();
+  let buf = '';
+  let final = null;
+  while (true) {
+    const { value, done } = await reader.read();
+    if (done) break;
+    buf += dec.decode(value, { stream: true });
+    let nl;
+    while ((nl = buf.indexOf('\n')) >= 0) {
+      const line = buf.slice(0, nl).trim();
+      buf = buf.slice(nl + 1);
+      if (!line) continue;
+      const ev = JSON.parse(line);
+      if (ev.type === 'progress') onProgress?.(ev.done, ev.total);
+      else if (ev.type === 'error') throw new Error(ev.error || 'laya error');
+      else if (ev.type === 'done' || Array.isArray(ev.results)) final = ev;
+    }
+  }
+  if (!final) throw new Error('no result');
+  return final;
 }
 
 function stageSize() {
@@ -139,20 +189,29 @@ function applyHome(key, opts = {}) {
 
 function lineupSlots(count) {
   const { W, phone } = stageSize();
-  const cw = phone ? 156 : 188;
-  const gap = phone ? 8 : 12;
-  const topY = phone ? 12 : 18;
-  const rowH = phone ? 104 : 118;
-  const maxPerRow = Math.max(1, Math.floor((W - 12) / (cw + gap)));
+  const cw = phone ? 168 : 188;
+  const ch = phone ? 92 : 104;
+  const scale = 1.08;
+  const gapX = phone ? 18 : 26;
+  const gapY = phone ? 20 : 28;
+  const slotW = Math.ceil(cw * scale);
+  const slotH = Math.ceil(ch * scale);
+  const cap = phone ? 2 : 4;
+  const maxPerRow = Math.max(1, Math.min(cap, Math.floor((W - 20) / (slotW + gapX))));
   const slots = [];
   for (let i = 0; i < count; i++) {
     const row = Math.floor(i / maxPerRow);
     const col = i % maxPerRow;
     const inRow = Math.min(maxPerRow, count - row * maxPerRow);
-    const rowWidth = inRow * cw + (inRow - 1) * gap;
-    const startX = Math.max(6, (W - rowWidth) / 2);
-    slots.push({ x: startX + col * (cw + gap), y: topY + row * rowH,
-      r: (Math.random() - 0.5) * 4, z: 600 + (count - i), s: 1 });
+    const rowWidth = inRow * slotW + (inRow - 1) * gapX;
+    const startX = Math.max(8, (W - rowWidth) / 2);
+    slots.push({
+      x: startX + col * (slotW + gapX),
+      y: 14 + row * (slotH + gapY),
+      r: (Math.random() - 0.5) * 3,
+      z: 600 + (count - i),
+      s: 1,
+    });
   }
   return slots;
 }
@@ -170,39 +229,94 @@ function paint(results) {
     if (!n) return;
     const slot = slots[i];
     const h = home[r.key] || slot;
-    const delay = 20 + i * 65 + Math.floor(Math.random() * 35);
+    const delay = 80 + i * 280 + Math.floor(Math.random() * 90);
     const pNorm = max ? r.p / max : 0;
-    n.classList.add('moving'); n.classList.remove('pile');
-    const midX = h.x + (Math.random() - 0.5) * 80;
-    const midY = Math.min(h.y - 40, slot.y + 60 + Math.random() * 40);
+    const grown = 1.0 + (1 - i / Math.max(1, winners.length)) * 0.07;
+    n.classList.add('moving', 'heaving');
+    const midX = h.x + (Math.random() - 0.5) * 36;
+    const midY = h.y - 28 - Math.random() * 18;
     n.style.transitionDelay = `${delay}ms`;
-    setT(n, { x: midX, y: midY, r: (Math.random() - 0.5) * 70,
-      s: 0.84 + Math.random() * 0.22, o: 1, z: 800 + winners.length - i });
+    setT(n, {
+      x: midX, y: midY,
+      r: (Math.random() - 0.5) * 18,
+      s: 0.78, o: 1, z: 800 + winners.length - i,
+    });
     later(() => {
-      n.style.transitionDelay = `${Math.max(0, delay - 10)}ms`;
-      setT(n, { x: slot.x, y: slot.y, r: slot.r, s: 1, o: 1, z: slot.z, p: pNorm.toFixed(3) });
+      n.classList.remove('pile', 'heaving');
+      n.style.transitionDelay = '0ms';
+      setT(n, {
+        x: slot.x, y: slot.y - 16, r: slot.r * 1.6,
+        s: grown * 1.08, o: 1, z: slot.z, p: pNorm.toFixed(3),
+      });
+      later(() => {
+        setT(n, {
+          x: slot.x, y: slot.y, r: slot.r,
+          s: grown, o: 1, z: slot.z, p: pNorm.toFixed(3),
+        });
+      }, 420);
       n.classList.toggle('hit', true);
       n.classList.toggle('top', i === 0 && r.p >= 0.5);
       const score = n.querySelector('.score');
       if (score) { score.hidden = false; score.textContent = r.p.toFixed(2); }
-      later(() => n.classList.remove('moving'), 850);
-    }, delay + 130);
+      later(() => n.classList.remove('moving'), 2800);
+    }, delay + 900);
+    later(() => shoveAside(h, i), delay + 180);
   });
 
   for (const c of CARDS) {
     if (winKeys.has(c.key)) continue;
-    const n = nodes[c.key]; const h = home[c.key];
-    if (!n || !h) continue;
-    n.classList.add('pile'); n.classList.remove('hit', 'top');
-    n.style.transitionDelay = `${Math.floor(Math.random() * 90)}ms`;
-    setT(n, {
-      x: h.x + (winners.length ? (Math.random() - 0.5) * 18 : 0),
-      y: h.y + (winners.length ? (Math.random() - 0.5) * 14 : 0),
-      r: h.r + (winners.length ? (Math.random() - 0.5) * 10 : 0),
-      s: h.s, o: winners.length ? 0.5 : 0.97, z: h.z, p: 0,
-    });
+    const n = nodes[c.key];
+    if (!n) continue;
+    n.classList.add('pile');
+    n.classList.remove('hit', 'top', 'falling');
     const score = n.querySelector('.score');
     if (score) { score.hidden = true; score.textContent = ''; }
+  }
+}
+
+function shoveAside(from, wave) {
+  const { W, H } = stageSize();
+  const cw = 112;
+  const margin = 4;
+  const floorY = H - 54;
+  for (const c of CARDS) {
+    const n = nodes[c.key];
+    const h = home[c.key];
+    if (!n || !h || !n.classList.contains('pile')) continue;
+    const dx = h.x - from.x;
+    const dy = h.y - from.y;
+    const dist = Math.hypot(dx, dy) || 1;
+    if (dist > 190) continue;
+    const push = (190 - dist) / 190;
+    const side = Math.abs(dx) < 8 ? (wave % 2 ? -1 : 1) : Math.sign(dx);
+    const spill = 22 + push * (70 + wave * 6);
+    const x = Math.max(margin, Math.min(W - cw - margin, h.x + side * spill + (Math.random() - 0.5) * 18));
+    const y = Math.min(floorY, h.y + 10 + push * 52 + Math.random() * 16);
+    n.classList.add('falling');
+    n.style.transitionDelay = `${Math.floor(Math.random() * 90)}ms`;
+    setT(n, {
+      x, y,
+      r: h.r + side * (16 + push * 48),
+      s: Math.max(0.72, h.s * (0.94 - push * 0.08)),
+      o: 0.42,
+      z: Math.max(1, (h.z || 8) - 6),
+      p: 0,
+    });
+  }
+}
+
+function stirPile() {
+  for (const c of CARDS) {
+    const n = nodes[c.key];
+    const h = home[c.key];
+    if (!n || !h || !n.classList.contains('pile')) continue;
+    n.style.transitionDelay = `${Math.floor(Math.random() * 180)}ms`;
+    setT(n, {
+      x: h.x + (Math.random() - 0.5) * 10,
+      y: h.y - 4 - Math.random() * 8,
+      r: h.r + (Math.random() - 0.5) * 8,
+      s: h.s,
+    });
   }
 }
 
@@ -218,15 +332,22 @@ async function run(query) {
     statusEl.textContent = 'messy pile at the bottom — type a claim or concept';
     statusEl.className = 'status';
     $('#timing').textContent = '';
+    hideProgress();
     reset(true);
     return;
   }
   statusEl.textContent = 'asking Laya…';
   statusEl.className = 'status loading';
+  setProgress(0, CARDS.length || 85);
+  stirPile();
   const t0 = performance.now();
   try {
-    const data = await scoreLaya(query);
+    const data = await scoreLaya(query, (done, total) => {
+      if (id !== seq) return;
+      setProgress(done, total);
+    });
     if (id !== seq) return;
+    hideProgress();
     if (!home[CARDS[0]?.key]) placeInPile(11);
     paint(data.results || []);
     const hits = Math.min((data.results || []).filter((r) => r.p >= HIT).length, MAX_LINE);
@@ -237,6 +358,7 @@ async function run(query) {
     $('#modePill').textContent = data.tuned ? 'fine-tuned' : 'base';
   } catch (e) {
     if (id !== seq) return;
+    hideProgress();
     statusEl.textContent = `server offline — start laya_ft_server.py (${String(e.message)})`;
     statusEl.className = 'status error';
     $('#timing').textContent = '';
