@@ -76,7 +76,16 @@ USE_TF=0 python server/laya_ft_server.py
 #   -> open http://127.0.0.1:8799
 ```
 
-If you skip step 3, the server loads the **stock** Laya checkpoint (`tuned=false`) so you can see the zero-shot baseline for comparison.
+> **You do not need a perfect 6/6 run.** Most of the gain lands early: this dataset
+> hits **85%+ eval accuracy by epoch 1** and barely moves after ~epoch 4. The trainer
+> writes a rolling `checkpoint_latest/` after **every** epoch, so if a run stops early
+> (timeout, sleep, OOM), just point the server at the last checkpoint you have and ship
+> it. Fewer epochs also work: `--epochs 4` is plenty. If you hit memory pressure on MPS,
+> lower `--micro-batch` (e.g. `4`) and raise `--grad-accum` to keep the effective batch
+> size the same.
+
+If you skip step 3 entirely, the server loads the **stock** Laya checkpoint (`tuned=false`)
+so you can see the zero-shot baseline for comparison.
 
 ### Just the API
 
